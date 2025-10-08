@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+# 🎮 Find Me — Quiz Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Find Me** est un jeu de type Trivial Pursuit, développé en **React + Vite** (frontend) et **NestJS** (backend).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Technologies principales
+- **Frontend** : React + TypeScript + Tailwind CSS
+- **Backend** : NestJS + TypeScript
+- **API externes** : Open Trivia DB & The Trivia API
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🧠 Objectif du projet
+Créer un jeu de quiz éducatif et ludique avec plusieurs modes :
+- **Mode Rapide** : questions aléatoires chronométrées
+- **Mode Histoire** : progression par pays
+- **Mode Équipe** : parties multijoueurs locales
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🏗️ Architecture du projet
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+find-me/
+├── frontend/ # Interface du jeu (Vite + React)
+└── backend/ # API NestJS (questions, scores)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## ⚙️ Installation
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Installer les dépendances:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+cd frontend && npm install
+cd ../backend && npm install
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+npm run dev
+
+---
+
+## 🧩 À venir
+
+Système d’indices et boutique de points
+
+Sauvegarde de progression
+
+Version mobile (PWA)
+
+---
+
+👨‍💻 Auteur
+
+Projet développé par [GERARD Jordan / Jordybou]
