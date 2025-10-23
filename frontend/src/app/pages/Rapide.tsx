@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { fetchQuestions } from "@/services/questions.service";
 import type { NormalizedQuestion } from "@/services/questions.service";
+import ReturnMenu from "@/components/ReturnButton";
 
 export default function Rapide() {
-  // Etat
+  // State
   const [questions, setQuestions] = useState<NormalizedQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -11,7 +12,7 @@ export default function Rapide() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Charger les questions depuis l'API
+  // Load questions from API
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -36,6 +37,7 @@ export default function Rapide() {
 
   const currentQuestion = questions[currentIndex];
 
+  // One answer by question, save a choice and compared with correct answer + Score 
   function handleAnswer(answer: string) {
     if (!currentQuestion || selectedAnswer) return;
     setSelectedAnswer(answer);
@@ -44,6 +46,7 @@ export default function Rapide() {
     }
   }
 
+  // Restart a game with new questions
   async function restart() {
     setLoading(true);
     setError(null);
@@ -60,6 +63,7 @@ export default function Rapide() {
     }
   }
 
+  // Condition and button for restart a game
   function handleNext() {
     if (!currentQuestion) return;
     if (currentIndex < questions.length - 1) {
@@ -70,7 +74,7 @@ export default function Rapide() {
     }
   }
 
-  // UI states
+  // UI states, early return 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -124,14 +128,18 @@ export default function Rapide() {
     );
   }
 
+  // logic UI for last question
   const isLast = currentIndex === questions.length - 1;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-sky-200">
       <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 w-full max-w-md text-center">
         <header className="flex items-center justify-between mb-4 text-sm text-sky-800">
-          <span>Question {currentIndex + 1} / {questions.length}</span>
-          <span className="font-semibold">Score : {score}</span>
+          <div className="flex flex-col items-start">
+            <span>Question {currentIndex + 1} / {questions.length}</span>
+            <span className="font-semibold text-sky-700">Score : {score}</span>
+          </div>
+          <ReturnMenu to ="/" label="Menu" />
         </header>
 
         <h2 className="text-2xl font-bold mb-4">{currentQuestion.question}</h2>
@@ -143,18 +151,19 @@ export default function Rapide() {
             const isCorrect = option === currentQuestion.correctAnswer;
             const showState = selectedAnswer !== null;
 
-            const base = "py-2 px-4 rounded-lg border font-semibold transition disabled:opacity-60";
+            const base = "py-2 px-4 rounded-lg border font-semibold transition disabled:opacity-80";
             const idle = "bg-blue-100 hover:bg-blue-200";
-            const good = "bg-green-500 text-white border-green-600";
-            const bad = "bg-red-500 text-white border-red-600";
-            const neutral = "bg-gray-100";
+            const good = "bg-green-500 text-white border-green-600 shadow-lg shadow-green-300/50 ring-2 ring-green-400";
+            const bad = "bg-red-500 text-white border-red-600 shadow-lg shadow-red-300/50 ring-2 ring-red-400";
+            const neutral = "bg-gray-100 opacity-80";
 
+            // Determine the button visual style
             let classes = `${base} ${idle}`;
             if (showState) {
-              if (isSelected && isCorrect) classes = `${base} ${good}`;
-              else if (isSelected && !isCorrect) classes = `${base} ${bad}`;
-              else if (!isSelected && isCorrect) classes = `${base} ${good}`; // affiche la bonne réponse en vert
-              else classes = `${base} ${neutral}`;
+              if (isSelected && isCorrect) classes = `${base} ${good}`; // user picked the correct answer -> green
+              else if (isSelected && !isCorrect) classes = `${base} ${bad}`; // wrong answer -> red
+              else if (!isSelected && isCorrect) classes = `${base} ${good}`; // display the correct answer even if not selected
+              else classes = `${base} ${neutral}`; // other answer -> neutral gray
             }
 
             return (
@@ -170,7 +179,7 @@ export default function Rapide() {
           })}
         </div>
 
-        {/* Feedback texte sous les réponses */}
+        {/* Feedback text under the answers */}
         {selectedAnswer && (
           <p
             className={`mt-3 font-medium ${selectedAnswer === currentQuestion.correctAnswer

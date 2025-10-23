@@ -6,25 +6,25 @@
 
 ### Frontend
 
-- ⚛️ **React + TypeScript**
-- 💨 **TailwindCSS**
-- ⚙️ **Vite**
-- 🧠 **Zustand** (store global — à venir)
+- **React + TypeScript**
+- **TailwindCSS**
+- **Vite**
+- **Zustand** (store global — à venir)
 
 ### Backend
 
-- 🧱 **NestJS** (API REST)
-- 🧩 **TypeScript**
-- 🗄️ **MongoDB** (prévu pour la sauvegarde des scores)
+- **NestJS**
+- **TypeScript**
+- **MongoDB** (prévu pour la sauvegarde des scores)
 
 ### APIs externes
 
-- 🌍 [Open Trivia DB](https://opentdb.com/)
-- 🎯 [The Trivia API](https://the-trivia-api.com/)
+- [Open Trivia DB](https://opentdb.com/)
+- [The Trivia API](https://the-trivia-api.com/) (non utilisé pour le moment)
 
 ---
 
-## 🧠 Objectif du projet
+## Objectif du projet
 
 Créer un jeu de quiz éducatif et ludique avec plusieurs modes :
  **Mode Rapide** — questions aléatoires chronométrées avec points
@@ -35,7 +35,7 @@ Créer un jeu de quiz éducatif et ludique avec plusieurs modes :
 
 ---
 
-## 🏗️ Architecture du projet
+## Architecture du projet
 
 find-me/
 ├── frontend/ # Interface du jeu (React + Vite)
@@ -50,7 +50,7 @@ find-me/
 
 ---
 
-## ⚙️ Installation
+## Installation
 
 Installer les dépendances:
 
@@ -62,12 +62,13 @@ npm run dev
 
 ---
 
-## 🧩 À venir
+## À venir
 
+- Provider pour traduire en 'fr'
+- Carte du monde progressive
 - Système d’indices et boutique de points
-- Sauvegarde de la progression
+- Sauvegarde de la progression (score + mode histoire)
 - Version mobile
-- Classement global des joueurs
 
 ---
 

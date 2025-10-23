@@ -66,7 +66,7 @@ async function smartFetch(url: string, retries = 5): Promise<Response> {
     // Fail
     if (res.status === 429) {
       console.warn(`⚠️ API trop sollicitée, tentative ${attempt}/${retries}`);
-      const delay = attempt * 2000; // increase (3s, 6s, 9s)
+      const delay = attempt * 2000; // increase (2s, 4s, 6s, 8s and 10s)
       await wait(delay);
       continue; // retry
     }
