@@ -25,7 +25,7 @@ const Menu = () => {
             to="/histoire"
             className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 text-white py-3 font-semibold shadow hover:bg-emerald-700 active:scale-[.98] transition"
           >
-            🌍 Mode Histoire
+            🌍 Mode Histoire(V.2)
           </Link>
 
           <Link
@@ -44,7 +44,7 @@ const Menu = () => {
         </div>
         {/* Footer */}
         <p className="mt-8 text-xs text-sky-800/70">
-          © 2025 Find Me — Tous droits réservés
+          Version - 1.0
         </p>
       </div>
     </div>

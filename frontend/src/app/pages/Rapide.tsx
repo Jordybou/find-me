@@ -66,11 +66,12 @@ export default function Rapide() {
   // Condition and button for restart a game
   function handleNext() {
     if (!currentQuestion) return;
+    if (selectedAnswer === null) return;
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((i) => i + 1);
       setSelectedAnswer(null);
     } else {
-      restart(); // dernière question → rejouer
+      restart();
     }
   }
 
@@ -133,71 +134,82 @@ export default function Rapide() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-sky-200">
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 w-full max-w-md text-center">
+      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 w-full max-w-[550px] mx-auto text-center">
         <header className="flex items-center justify-between mb-4 text-sm text-sky-800">
           <div className="flex flex-col items-start">
             <span>Question {currentIndex + 1} / {questions.length}</span>
             <span className="font-semibold text-sky-700">Score : {score}</span>
           </div>
-          <ReturnMenu to ="/" label="Menu" />
+          <ReturnMenu to="/" label="Menu" />
         </header>
 
         <h2 className="text-2xl font-bold mb-4">{currentQuestion.question}</h2>
 
-        {/* Answer block */}
-        <div className="grid gap-3">
-          {currentQuestion.answers.map((option) => {
-            const isSelected = selectedAnswer === option;
-            const isCorrect = option === currentQuestion.correctAnswer;
-            const showState = selectedAnswer !== null;
+        {/* Encompasses the 3 blocks */}
+        <div className="grid gap-10">
+          {/* Answer block */}
+          <div className="answers">
+            {currentQuestion.answers.map((option, i) => {
+              const isSelected = selectedAnswer === option;
+              const isCorrect = option === currentQuestion.correctAnswer;
+              const showState = selectedAnswer !== null;
 
-            const base = "py-2 px-4 rounded-lg border font-semibold transition disabled:opacity-80";
-            const idle = "bg-blue-100 hover:bg-blue-200";
-            const good = "bg-green-500 text-white border-green-600 shadow-lg shadow-green-300/50 ring-2 ring-green-400";
-            const bad = "bg-red-500 text-white border-red-600 shadow-lg shadow-red-300/50 ring-2 ring-red-400";
-            const neutral = "bg-gray-100 opacity-80";
+              const base =
+                "w-full min-h-[44px] px-4 py-2 rounded-lg border-2 font-medium transition-colors duration-200 select-none";
+              const idle =
+                "bg-white border-gray-300 text-gray-900 hover:bg-sky-50";
+              const good =
+                "!bg-green-100 !text-green-900 !border-green-600 shadow-[0_0_0_4px_rgba(34,197,94,1)]";
+              const bad =
+                "!bg-red-100 !text-red-900 !border-red-600 shadow-[0_0_0_4px_rgba(239,68,68,1)]";
+              const neutral =
+                "bg-gray-50 text-gray-600 border-gray-300";
 
-            // Determine the button visual style
-            let classes = `${base} ${idle}`;
-            if (showState) {
-              if (isSelected && isCorrect) classes = `${base} ${good}`; // user picked the correct answer -> green
-              else if (isSelected && !isCorrect) classes = `${base} ${bad}`; // wrong answer -> red
-              else if (!isSelected && isCorrect) classes = `${base} ${good}`; // display the correct answer even if not selected
-              else classes = `${base} ${neutral}`; // other answer -> neutral gray
-            }
+              let classes = `${base} ${idle}`;
+              if (showState) {
+                if (isSelected && isCorrect) classes = `${base} ${good}`;
+                else if (isSelected && !isCorrect) classes = `${base} ${bad}`;
+                else if (!isSelected && isCorrect) classes = `${base} ${good}`;
+                else classes = `${base} ${neutral}`;
+              }
 
-            return (
-              <button
-                key={option}
-                onClick={() => handleAnswer(option)}
-                className={classes}
-                disabled={!!selectedAnswer}
+              return (
+                <button
+                  key={`${currentQuestion.id}-${i}`}
+                  type="button"
+                  onClick={() => {
+                    if (selectedAnswer) return;
+                    handleAnswer(option);
+                  }}
+                  className={classes}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Feedback text under the answers */}
+          <div className="min-h-[0.8rem]">
+            {selectedAnswer && (
+              <p
+                className={`font-medium ${selectedAnswer === currentQuestion.correctAnswer
+                  ? "text-green-700"
+                  : "text-red-700"
+                  }`}
               >
-                {option}
-              </button>
-            );
-          })}
-        </div>
+                {selectedAnswer === currentQuestion.correctAnswer
+                  ? "Bonne réponse !"
+                  : `Mauvaise réponse… La bonne réponse était : ${currentQuestion.correctAnswer}`}
+              </p>
+            )}
+          </div>
 
-        {/* Feedback text under the answers */}
-        {selectedAnswer && (
-          <p
-            className={`mt-3 font-medium ${selectedAnswer === currentQuestion.correctAnswer
-              ? "text-green-700"
-              : "text-red-700"
-              }`}
-          >
-            {selectedAnswer === currentQuestion.correctAnswer
-              ? "Bonne réponse !"
-              : `Mauvaise réponse… La bonne réponse était : ${currentQuestion.correctAnswer}`}
-          </p>
-        )}
-
-        <div className="mt-6">
+          {/* Button Next/Replay */}
           <button
             onClick={handleNext}
             disabled={selectedAnswer === null && !isLast}
-            className="bg-sky-600 text-white font-semibold py-2 px-6 rounded-lg shadow hover:bg-sky-700 transition disabled:opacity-60"
+            className="justify-self-center w-1/2 bg-sky-600 text-white font-semibold py-2 px-6 rounded-lg shadow hover:bg-sky-700 transition disabled:opacity-60"
           >
             {isLast && selectedAnswer !== null ? "Rejouer" : "Suivant"}
           </button>

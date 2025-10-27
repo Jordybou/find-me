@@ -26,3 +26,8 @@ body {
     animation: spin 1s linear infinite;
   }
 }
+
+/* espace entre les boutons de réponses */
+.answers button + button {
+  margin-top: 0.5rem;
+}
