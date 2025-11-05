@@ -11,8 +11,16 @@
   animation: fadeIn 0.8s ease-in-out;
 }
 
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 body { 
   font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+  overflow-x: hidden;
+  background-color: transparent;
 }
 
 @layer utilities {
@@ -30,4 +38,16 @@ body {
 /* espace entre les boutons de réponses */
 .answers button + button {
   margin-top: 0.5rem;
+}
+
+/* manages the style button (Link) */
+.btn-card {
+  background-color: #fff !important;
+  border-radius: 10px;
+  display: block;
+}
+
+.btn-card:hover {
+  background-color: #f8fafc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }

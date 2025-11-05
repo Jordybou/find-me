@@ -24,6 +24,7 @@ export default function ReturnMenu({ to = "/", label = "Menu", className = "" }:
                 "hover:bg-sky-200 active:bg-sky-300",
                 "transition",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2",
+                "[color:#1E40AF]",
                 className,
             ].join(" ")} //use '.join' for create a className
         >
