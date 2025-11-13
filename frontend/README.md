@@ -27,8 +27,9 @@
 ## Objectif du projet
 
 Créer un jeu de quiz éducatif et ludique avec plusieurs modes :
+ **Mode Simple** — questions avec catégories et difficulté voulu
  **Mode Rapide** — questions aléatoires chronométrées avec points
- **Mode Histoire** — progression par pays  
+ **Mode Histoire** — progression par pays (v.2)
  **Mode Équipe** — parties multijoueurs locales  
  **Options** — personnalisation du thème et de la langue  
  **Boutique** — achat d’indices et points bonus (à venir)

@@ -1,5 +1,22 @@
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
+export interface ApiCategory { id: number; name: string; }
+
+export async function fetchCategories(language: "en"|"fr"="fr"): Promise<ApiCategory[]> {
+  const res = await fetch("https://opentdb.com/api_category.php");
+  if (!res.ok) throw new Error("Erreur de chargement des catégories");
+  const data = await res.json();
+  let cats: ApiCategory[] = (data.trivia_categories ?? [])
+    .map((c: any) => ({ id: c.id, name: c.name }));
+
+  // Optionnel: traduction FR si tu veux
+  if (language === "fr") {
+    // cats = await Promise.all(cats.map(async c => ({...c, name: await translateToFrench(c.name)})));
+  }
+
+  return cats;
+}
+
 // typer les options acceptées
 export interface FetchQuestionsParams {
   amount?: number;               // 1..50 (limite OpenTDB)
@@ -21,7 +38,7 @@ export interface NormalizedQuestion {
 }
 
 // Algorithme Fisher-Yates pour mélanger équitablement
-function shuffle<T>(arr: T[]): T[] {
+export function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { fetchQuestions } from "@/services/questions.service";
 import type { NormalizedQuestion } from "@/services/questions.service";
 import ReturnMenu from "@/components/ReturnButton";
+import useTimer from "@/hooks/useTimer";
+
 export default function Rapide() {
   // State
   const [questions, setQuestions] = useState<NormalizedQuestion[]>([]);
@@ -10,6 +12,7 @@ export default function Rapide() {
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [gameOver, setGameOver] = useState(false);
 
   // Load questions from API
   useEffect(() => {
@@ -25,6 +28,7 @@ export default function Rapide() {
         setSelectedAnswer(null);
         setScore(0);
       } catch (e: any) {
+        console.error("[Rapide] fetch error", e);
         if (!alive) return;
         setError(e?.message ?? "Erreur lors du chargement des questions");
       } finally {
@@ -35,9 +39,11 @@ export default function Rapide() {
   }, []);
 
   const currentQuestion = questions[currentIndex];
+  const isLast = currentIndex === questions.length - 1;
 
   // One answer by question, save a choice and compared with correct answer + Score 
   function handleAnswer(answer: string) {
+    if (gameOver) return; // block a choice if timer is 0
     if (!currentQuestion || selectedAnswer) return;
     setSelectedAnswer(answer);
     if (answer === currentQuestion.correctAnswer) {
@@ -55,6 +61,9 @@ export default function Rapide() {
       setCurrentIndex(0);
       setSelectedAnswer(null);
       setScore(0);
+      setGameOver(false);
+      reset();
+      start(180);
     } catch (e: any) {
       setError(e?.message ?? "Erreur lors du chargement des questions");
     } finally {
@@ -62,7 +71,6 @@ export default function Rapide() {
     }
   }
 
-  // Condition and button for restart a game
   function handleNext() {
     if (!currentQuestion) return;
     if (selectedAnswer === null) return;
@@ -74,12 +82,35 @@ export default function Rapide() {
     }
   }
 
+  function handleEndGame() {
+    setGameOver(true);
+  }
+
+  // format a timer in minutes and seconds
+  function formatTime(total: number) {
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  }
+
+  const { secondsLeft, start, reset } = useTimer(() => {
+    handleEndGame();
+  });
+
+  useEffect(() => {
+    // start only if we have questions
+    if (!loading && !error && questions.length > 0) {
+      start(180); // editable (default = 180 sec)
+      setGameOver(false);
+    }
+  }, [loading, error, questions.length, start]);
+
   // UI states, early return 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-sky-200">
         <div className="relative bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 w-full max-w-[550px] mx-auto">
-          <header className="flex items-center justify-between mb-4 text-sm text-sky-800">
+          <header className="flex items-center justify-between mb-4 text-sm [color:#0B1221]">
             <div className="flex flex-col items-start">
               <span className="invisible">Question 0 / 10</span>
               <span className="invisible">Score : 0</span>
@@ -106,7 +137,7 @@ export default function Rapide() {
                 d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326Z"
               />
             </svg>
-            <p className="mt-3 text-sm text-sky-700 font-medium">Loading…</p>
+            <p className="mt-3 text-sm [color:#0369A1] font-medium">Loading…</p>
           </div>
         </div>
       </div>
@@ -117,7 +148,7 @@ export default function Rapide() {
     return (
       <div className="min-h-screen grid place-items-center">
         <div className="bg-white/80 border rounded-xl p-6 shadow">
-          <p className="text-red-700 font-medium">{error}</p>
+          <p className="font-medium [color:#B91C1C]">{error}</p>
           <button
             onClick={restart}
             className="mt-4 bg-sky-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-sky-700 transition"
@@ -132,32 +163,34 @@ export default function Rapide() {
   if (!currentQuestion) {
     return (
       <div className="min-h-screen grid place-items-center">
-        <p className="text-gray-600">Aucune question disponible.</p>
+        <p className="font-semibold [color:#4B5563]">Aucune question disponible.</p>
       </div>
     );
   }
 
-  // logic UI for last question
-  const isLast = currentIndex === questions.length - 1;
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-sky-200">
       <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 w-full max-w-[550px] mx-auto text-center">
-        <header className="flex items-center justify-between mb-4 text-sm text-sky-800">
+        <header className="flex items-end justify-between mb-4 text-sm [color:#0B1221]">
           <div className="flex flex-col items-start">
-            <span>Question {currentIndex + 1} / {questions.length}</span>
-            <span className="font-semibold text-sky-700">Score : {score}</span>
+            <span className="font-semibold [color:#030303]">Question {currentIndex + 1} / {questions.length}</span>
+            <span className="font-semibold [color:#030303]">Score : {score}</span>
+            <span className="font-semibold [color:#030303]">{formatTime(secondsLeft)}</span>
           </div>
-          <ReturnMenu to="/" label="Menu" />
+          <div className="flex items-center gap-3">
+            <ReturnMenu to="/" label="Menu" />
+          </div>
         </header>
-        <h2 className="text-2xl font-bold mb-4 [color:#1E40AF]">
+
+        <h2 className="text-2xl font-bold mb-4 [color:#030303]">
           {currentQuestion.question}
         </h2>
+
         {/* Encompasses the 3 blocks */}
         <div className="grid gap-10">
           {/* Answer block */}
           <div className="answers">
-            {currentQuestion.answers.map((option, i) => {
+            {(currentQuestion.answers ?? []).map((option, i) => {
               const isSelected = selectedAnswer === option;
               const isCorrect = option === currentQuestion.correctAnswer;
               const showState = selectedAnswer !== null;
@@ -165,13 +198,13 @@ export default function Rapide() {
               const base =
                 "w-full min-h-[44px] px-4 py-2 rounded-lg border-2 font-medium transition-colors duration-200 select-none";
               const idle =
-                "bg-white border-gray-300 text-gray-900 hover:bg-sky-50";
+                "bg-white border-gray-300 [color:#111827] hover:bg-sky-50";
               const good =
-                "!bg-green-100 !text-green-900 !border-green-600 shadow-[0_0_0_4px_rgba(34,197,94,1)]";
+                "bg-green-100 border-green-600 shadow-[0_0_0_4px_rgba(34,197,94,1)] [color:#14532D]";
               const bad =
-                "!bg-red-100 !text-red-900 !border-red-600 shadow-[0_0_0_4px_rgba(239,68,68,1)]";
+                "bg-red-100 border-red-600 shadow-[0_0_0_4px_rgba(239,68,68,1)] [color:#7F1D1D]";
               const neutral =
-                "bg-gray-50 text-gray-600 border-gray-300";
+                "bg-gray-50 [color:#4B5563] border-gray-300";
 
               let classes = `${base} ${idle}`;
               if (showState) {
@@ -186,9 +219,10 @@ export default function Rapide() {
                   key={`${currentQuestion.id}-${i}`}
                   type="button"
                   onClick={() => {
-                    if (selectedAnswer) return;
+                    if (gameOver || selectedAnswer) return;
                     handleAnswer(option);
                   }}
+                  disabled={gameOver || !!selectedAnswer}
                   className={classes}
                 >
                   {option}
@@ -199,11 +233,16 @@ export default function Rapide() {
 
           {/* Feedback text under the answers */}
           <div className="min-h-[0.8rem]">
-            {selectedAnswer && (
+            {gameOver && (
+              <p className="font-semibold [color:#1E40AF]">
+                Temps écoulé — partie terminée.
+              </p>
+            )}
+            {!gameOver && selectedAnswer && (
               <p
                 className={`font-medium ${selectedAnswer === currentQuestion.correctAnswer
-                  ? "text-green-700"
-                  : "text-red-700"
+                    ? "[color:#030303]"
+                    : "[color:#030303]"
                   }`}
               >
                 {selectedAnswer === currentQuestion.correctAnswer
@@ -215,11 +254,11 @@ export default function Rapide() {
 
           {/* Button Next/Replay */}
           <button
-            onClick={handleNext}
-            disabled={selectedAnswer === null && !isLast}
+            onClick={gameOver ? restart : handleNext}
+            disabled={!gameOver && (selectedAnswer === null && !isLast)}
             className="justify-self-center w-1/2 bg-sky-600 text-white font-semibold py-2 px-6 rounded-lg shadow hover:bg-sky-700 transition disabled:opacity-60"
           >
-            {isLast && selectedAnswer !== null ? "Rejouer" : "Suivant"}
+            {gameOver ? "Rejouer" : (isLast && selectedAnswer !== null ? "Rejouer" : "Suivant")}
           </button>
         </div>
       </div>
