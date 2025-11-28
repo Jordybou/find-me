@@ -224,7 +224,7 @@ export default function SimpleMode() {
           <header className="mb-6 grid [grid-template-columns:1fr_auto_1fr] items-center">
             <div />
 
-            <h1 className="text-2xl font-extrabold tracking-tight [color:#030303] text-center m-0">
+            <h1 className="text-base font-extrabold tracking-tight [color:#030303] text-center m-0">
               Mode Simple
             </h1>
 

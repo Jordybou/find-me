@@ -35,7 +35,7 @@ body {
   }
 }
 
-/* espace entre les boutons de réponses */
+/* space between answers buttons */
 .answers button + button {
   margin-top: 0.5rem;
 }
